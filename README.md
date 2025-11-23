@@ -1,7 +1,6 @@
 
 # Project HackSavy | 2024
 # Air Quality Index Prediction Web App
-### Web App Demo Video
 ![Demo Video](Hackathon/Hackathon.gif)
 
 ## Hackathon Context
