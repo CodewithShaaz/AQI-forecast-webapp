@@ -1,6 +1,8 @@
 
 # Project HackSavy | 2024
 # Air Quality Index Prediction Web App
+### Web App Demo Video
+![Demo Video](Hackathon/Hackathon.gif)
 
 ## Hackathon Context
 This project was developed as part of **HackSavy-24**, a 24-hour national level hackathon at Mahatma Gandhi Institute of Technology, Hyderabad.
@@ -28,15 +30,8 @@ Our team built a predictive AI web application to forecast air quality levels (A
 - Jinja2 Templating
 - Data Science (Time Series Forecasting)
 
-## Screenshots
-
-Below are some screenshots from the project and hackathon participation. Replace the image links with your actual screenshots later.
-
 ### Hackathon Certificate
 [View Certificate](https://drive.google.com/file/d/18rTIj5Qrra5atlGU1yu0GIC_fqZHWenh/view?usp=sharing)
-
-### Web App Demo Video
-![Demo Video](Hackathon/Hackathon.gif)
 
 ## How to Run
 1. **Clone the repository:**
