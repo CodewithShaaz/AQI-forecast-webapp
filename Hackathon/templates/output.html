@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQI Prediction Results | Project Mayhem</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --dark-bg: #0f172a;
+            --light-bg: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #87ceeb 0%, #4fc3f7 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        /* Navigation */
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .btn-back {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-back:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Main Container */
+        .results-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Header Card */
+        .results-header {
+            background: white;
+            border-radius: 25px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .date-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* AQI Display Card */
+        .aqi-display {
+            background: white;
+            border-radius: 25px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .aqi-value-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 2rem auto;
+        }
+
+        .aqi-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .aqi-number {
+            font-size: 5rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+
+        .aqi-label {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .aqi-description {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-top: 1.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Color classes for AQI levels */
+        .aqi-good { background: linear-gradient(135deg, #10b981, #059669); }
+        .aqi-moderate { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .aqi-unhealthy-sensitive { background: linear-gradient(135deg, #f97316, #ea580c); }
+        .aqi-unhealthy { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .aqi-very-unhealthy { background: linear-gradient(135deg, #9333ea, #7e22ce); }
+        .aqi-hazardous { background: linear-gradient(135deg, #7f1d1d, #450a0a); }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .metric-icon.mae { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .metric-icon.rmse { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .metric-icon.mape { background: linear-gradient(135deg, #10b981, #059669); }
+
+        .metric-title {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .metric-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* Chart Section */
+        .chart-section {
+            background: white;
+            border-radius: 25px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .section-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn-action {
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-action {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-secondary-action {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary-action:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .results-header, .aqi-display, .chart-section {
+                padding: 1.5rem;
+            }
+
+            .aqi-value-container {
+                width: 200px;
+                height: 200px;
+            }
+
+            .aqi-number {
+                font-size: 4rem;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-wind"></i> AirQuality.AI
+            </a>
+            <a href="newindex2.html" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </nav>
+
+    <!-- Results Container -->
+    <div class="results-container">
+        <!-- Header -->
+        <div class="results-header">
+            <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1rem;">
+                Air Quality Prediction Results
+            </h1>
+            <div class="date-badge">
+                <i class="fas fa-calendar-check"></i> {{inputdate}}
+                {% if date_message %}<br><span style="color:red;font-size:1rem;">{{date_message}}</span>{% endif %}
+            </div>
+        </div>
+
+        <!-- AQI Display -->
+        <div class="aqi-display">
+            <div class="aqi-value-container">
+                <div class="aqi-circle" style="background: {{aqi_color}};">
+                    <div class="aqi-number">{{output}}</div>
+                    <div class="aqi-label">{{aqi_category}}</div>
+                </div>
+            </div>
+            <div class="aqi-description">
+                <p><strong>Health Implications:</strong> {% if aqi_category == 'Good' %}Air quality is satisfactory.{% elif aqi_category == 'Moderate' %}Air quality is acceptable; some pollutants may be a concern for a small number of sensitive individuals.{% elif aqi_category == 'Unhealthy for Sensitive Groups' %}Sensitive groups may experience health effects. General public is less likely to be affected.{% elif aqi_category == 'Unhealthy' %}Everyone may begin to experience health effects; sensitive groups may experience more serious effects.{% elif aqi_category == 'Very Unhealthy' %}Health alert: everyone may experience more serious health effects.{% else %}Health warnings of emergency conditions. The entire population is more likely to be affected.{% endif %}</p>
+            </div>
+        </div>
+
+        <!-- Model Performance Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon mae">
+                    <i class="fas fa-ruler"></i>
+                </div>
+                <div class="metric-title">Mean Absolute Error</div>
+                <div class="metric-value">{{mae}}</div>
+                <div class="metric-description">Average prediction deviation</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon rmse">
+                    <i class="fas fa-chart-area"></i>
+                </div>
+                <div class="metric-title">Root Mean Square Error</div>
+                <div class="metric-value">{{rmse}}</div>
+                <div class="metric-description">Prediction accuracy metric</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon mape">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="metric-title">Mean Absolute Percentage Error</div>
+                <div class="metric-value">{{mape}}%</div>
+                <div class="metric-description">Relative prediction accuracy</div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-section">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span>AQI Trend Analysis</span>
+            </div>
+            <div style="background: #f8fafc; padding: 2rem; border-radius: 15px;">
+                {{chart|safe}}
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn-action btn-primary-action" onclick="window.history.back()">
+                <i class="fas fa-redo"></i> Make Another Prediction
+            </button>
+            <button class="btn-action btn-secondary-action" onclick="window.print()">
+                <i class="fas fa-download"></i> Download Report
+            </button>
+            <button class="btn-action btn-secondary-action" onclick="shareResults()">
+                <i class="fas fa-share-alt"></i> Share Results
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function shareResults() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'AQI Prediction Results',
+                    text: `Air Quality Index prediction: {{output}} - {{aqi_category}}`,
+                    url: window.location.href
+                }).catch(err => console.log('Error sharing:', err));
+            } else {
+                alert('Sharing not supported on this browser');
+            }
+        }
+    </script>
+</body>
+</html>
