@@ -36,7 +36,7 @@ Below are some screenshots from the project and hackathon participation. Replace
 [View Certificate](https://drive.google.com/file/d/18rTIj5Qrra5atlGU1yu0GIC_fqZHWenh/view?usp=sharing)
 
 ### Web App Demo Video
-![Demo Video](images/demo.gif)
+![Demo Video](Hackathon/Hackathon.gif)
 
 ## How to Run
 1. **Clone the repository:**
